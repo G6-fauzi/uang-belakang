@@ -40,6 +40,13 @@ body {
   min-height: 100vh;
   color: var(--text-main);
   padding: 20px;
+  overflow: hidden; /* Prevent body scrolling/bouncing on mobile */
+  overscroll-behavior-y: none; /* Prevent iOS/Android pull-to-refresh and overscroll */
+}
+
+html {
+  overflow: hidden;
+  overscroll-behavior-y: none;
 }
 
 /* Device Wrapper simulation for Desktop */
@@ -100,6 +107,7 @@ body {
   overflow-y: auto;
   padding-bottom: 90px; /* Space for navbar */
   scrollbar-width: none; /* Hide scrollbar Firefox */
+  overscroll-behavior-y: contain; /* Enable native bounce on scroll area only */
 }
 .scroll-area::-webkit-scrollbar {
   display: none; /* Hide scrollbar Chrome/Safari */
@@ -325,6 +333,27 @@ body {
   gap: 16px; /* Increased gap spacing */
 }
 
+.bottom-limit-indicator {
+  text-align: center;
+  padding: 24px 0 40px;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0.7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.bottom-limit-indicator::before,
+.bottom-limit-indicator::after {
+  content: '';
+  height: 1px;
+  width: 40px;
+  background: var(--text-muted);
+  opacity: 0.3;
+}
+
 .nominal-card {
   background: var(--card-bg);
   border-radius: var(--radius-md);
@@ -403,12 +432,34 @@ body {
   justify-content: flex-end;
   align-items: center;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  padding-right: 36px; /* Space for drag handle */
 }
 
 .nominal-card .card-amount {
   font-weight: 700;
   display: inline-block;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.drag-handle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  opacity: 0.5;
+  cursor: grab;
+  padding: 8px;
+  touch-action: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity var(--transition-fast);
+}
+.drag-handle:hover,
+.drag-handle:active {
+  opacity: 1;
+  color: var(--primary);
 }
 
 /* Detail (Default) View Layout Positions */
@@ -625,6 +676,11 @@ body {
   align-items: center;
   z-index: 100;
   padding-bottom: 8px; /* Simulated safe area */
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bottom-nav.nav-hidden {
+  transform: translateY(100%);
 }
 
 .nav-item {
