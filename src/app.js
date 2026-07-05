@@ -249,6 +249,7 @@ function setupDragAndDrop(card, entryId) {
 
 function setupTouchDrag(card, entryId) {
   card.addEventListener('touchstart', (e) => {
+    if (!e.target.closest('.drag-handle')) return;
     if (e.target.closest('.card-action-btn')) return;
     
     const touch = e.touches[0];
@@ -353,6 +354,9 @@ function renderNominalList() {
       <div class="card-right">
         <span class="card-amount">${isCompact ? formatRupiah(entry.nominal).replace('Rp', '').trim() : formatRupiah(entry.nominal)}</span>
       </div>
+      <div class="drag-handle" aria-label="Drag to reorder">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="9" x2="20" y2="9"></line><line x1="4" y1="15" x2="20" y2="15"></line></svg>
+      </div>
     `;
     
     // Setup reordering listeners
@@ -403,6 +407,14 @@ function renderNominalList() {
     
     elNominalList.appendChild(card);
   });
+  
+  // Add bottom limit indicator
+  if (state.entries.length > 0) {
+    const bottomLimit = document.createElement('div');
+    bottomLimit.className = 'bottom-limit-indicator';
+    bottomLimit.innerText = 'Akhir Daftar Nominal';
+    elNominalList.appendChild(bottomLimit);
+  }
 }
 
 function renderHistoryTimeline() {
@@ -705,6 +717,23 @@ elNavHistory.addEventListener('click', () => switchTab('history'));
 // View Controls
 elBtnViewCompact.addEventListener('click', () => switchViewMode('compact'));
 elBtnViewDetail.addEventListener('click', () => switchViewMode('detail'));
+
+// Auto-hide bottom nav on scroll
+const scrollArea = document.getElementById('scrollArea');
+const bottomNav = document.querySelector('.bottom-nav');
+
+// Initial check
+if (scrollArea.scrollTop <= 10) {
+  bottomNav.classList.add('nav-hidden');
+}
+
+scrollArea.addEventListener('scroll', () => {
+  if (scrollArea.scrollTop <= 10) {
+    bottomNav.classList.add('nav-hidden');
+  } else {
+    bottomNav.classList.remove('nav-hidden');
+  }
+});
 
 // ----------------------------------------------------
 // INITIALIZATION
